@@ -1,0 +1,13 @@
+{
+    "name": "dev.shino.tools",
+    "displayName": "Shino VRC Tools",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "description": "Tools for VRC SDK3 avatars",
+    "author": {
+        "name": "Shino"
+    },
+    "vpmDependencies": {
+        "com.vrchat.avatars": ">=3.3.0 <3.11.0"
+    }
+}
