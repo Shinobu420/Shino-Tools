@@ -8,7 +8,10 @@ namespace Shino.Tools.Editor
         public static void Import()
         {
             string path = EditorUtility.OpenFilePanel("Import Package", "", "unitypackage");
-            if (!string.IsNullOrEmpty(path)) AssetDatabase.ImportPackage(path, true);
+            if (!string.IsNullOrEmpty(path))
+            {
+                AssetDatabase.ImportPackage(path, true);
+            }
         }
     }
 }

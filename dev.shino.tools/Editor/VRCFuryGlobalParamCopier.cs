@@ -16,9 +16,15 @@ namespace Shino.Tools.Editor
         private void OnGUI()
         {
             _targetObject = (GameObject)EditorGUILayout.ObjectField("Target GameObject", _targetObject, typeof(GameObject), true);
-            if (GUILayout.Button("Use Selected") && Selection.activeGameObject != null) _targetObject = Selection.activeGameObject;
+            if (GUILayout.Button("Use Selected") && Selection.activeGameObject != null)
+            {
+                _targetObject = Selection.activeGameObject;
+            }
             _fxController = (AnimatorController)EditorGUILayout.ObjectField("FX Controller", _fxController, typeof(AnimatorController), false);
-            if (GUILayout.Button("Scan and Copy") && _targetObject && _fxController) ScanAndCopy();
+            if (GUILayout.Button("Scan and Copy") && _targetObject && _fxController)
+            {
+                ScanAndCopy();
+            }
         }
 
         private void ScanAndCopy()
@@ -26,7 +32,10 @@ namespace Shino.Tools.Editor
             HashSet<string> paramsToAdd = new HashSet<string>();
             foreach (MonoBehaviour comp in _targetObject.GetComponentsInChildren<MonoBehaviour>(true))
             {
-                if (comp == null || comp.GetType().Name != "VRCFury") continue;
+                if (comp == null || comp.GetType().Name != "VRCFury")
+                {
+                    continue;
+                }
 
                 SerializedObject so = new SerializedObject(comp);
                 // Pull directly from the 'content' object shown in your screenshot

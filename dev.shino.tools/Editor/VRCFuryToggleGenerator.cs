@@ -19,7 +19,10 @@ namespace Shino.Tools.Editor
             _targetRoot = (GameObject)EditorGUILayout.ObjectField("Target Root", _targetRoot, typeof(GameObject), true);
             if (GUILayout.Button("Use Selected", GUILayout.Width(100)))
             {
-                if (Selection.activeGameObject != null) _targetRoot = Selection.activeGameObject;
+                if (Selection.activeGameObject != null)
+                {
+                    _targetRoot = Selection.activeGameObject;
+                }
             }
             EditorGUILayout.EndHorizontal();
             _menuPrefix = EditorGUILayout.TextField("Menu Prefix", _menuPrefix); 
@@ -58,12 +61,18 @@ namespace Shino.Tools.Editor
             foreach (GameObject child in validChildren)
             {
                 Component vrcfComp = child.GetComponent(vrcfuryType);
-                if (vrcfComp == null) vrcfComp = child.AddComponent(vrcfuryType);
+                if (vrcfComp == null)
+                {
+                    vrcfComp = child.AddComponent(vrcfuryType);
+                }
 
                 SerializedObject so = new SerializedObject(vrcfComp);
                 SerializedProperty featuresProp = so.FindProperty("config.features");
 
-                if (featuresProp == null) continue;
+                if (featuresProp == null)
+                {
+                    continue;
+                }
 
                 featuresProp.arraySize++;
                 SerializedProperty newFeature = featuresProp.GetArrayElementAtIndex(featuresProp.arraySize - 1);
@@ -107,7 +116,10 @@ namespace Shino.Tools.Editor
 
             foreach (MonoBehaviour comp in _targetRoot.GetComponentsInChildren<MonoBehaviour>(true))
             {
-                if (comp == null || comp.GetType().Name != "VRCFury") continue;
+                if (comp == null || comp.GetType().Name != "VRCFury")
+                {
+                    continue;
+                }
 
                 SerializedObject so = new SerializedObject(comp);
                 bool modified = false;
@@ -119,7 +131,9 @@ namespace Shino.Tools.Editor
                     {
                         SerializedProperty feature = features.GetArrayElementAtIndex(i);
                         if (feature.managedReferenceFullTypename.Contains("Toggle"))
+                        {
                             modified |= TrySetGlobalParam(feature);
+                        }
                     }
                 }
 
@@ -159,7 +173,10 @@ namespace Shino.Tools.Editor
         {
             foreach (Transform child in current)
             {
-                if (child.name == "Armature") continue; 
+                if (child.name == "Armature")
+                {
+                    continue; 
+                }
                 validObjects.Add(child.gameObject);
                 ScanChildren(child, validObjects);
             }
@@ -170,7 +187,10 @@ namespace Shino.Tools.Editor
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 var type = assembly.GetType(className);
-                if (type != null) return type;
+                if (type != null)
+                {
+                    return type;
+                }
             }
             return null;
         }

@@ -12,7 +12,10 @@ namespace Shino.Tools.Editor
             // Open folder selection dialog
             string folderPath = EditorUtility.OpenFolderPanel("Select Folder with .unitypackage files", "", "");
 
-            if (string.IsNullOrEmpty(folderPath)) return;
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                return;
+            }
 
             // Get all package files in the directory
             string[] files = Directory.GetFiles(folderPath, "*.unitypackage", SearchOption.AllDirectories);
