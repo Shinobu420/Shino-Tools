@@ -7,24 +7,24 @@ namespace Shino.Tools.Editor
 {
     public class VRCFuryGlobalParamCopier : EditorWindow
     {
-        public GameObject targetObject;
-        public AnimatorController fxController;
+        [SerializeField] private GameObject _targetObject;
+        [SerializeField] private AnimatorController _fxController;
 
         [MenuItem("Tools/Shino/VRCFury Global Param Copier")]
         public static void ShowWindow() => GetWindow<VRCFuryGlobalParamCopier>("VRCFury Param Copier");
 
         private void OnGUI()
         {
-            targetObject = (GameObject)EditorGUILayout.ObjectField("Target GameObject", targetObject, typeof(GameObject), true);
-            if (GUILayout.Button("Use Selected") && Selection.activeGameObject != null) targetObject = Selection.activeGameObject;
-            fxController = (AnimatorController)EditorGUILayout.ObjectField("FX Controller", fxController, typeof(AnimatorController), false);
-            if (GUILayout.Button("Scan and Copy") && targetObject && fxController) ScanAndCopy();
+            _targetObject = (GameObject)EditorGUILayout.ObjectField("Target GameObject", _targetObject, typeof(GameObject), true);
+            if (GUILayout.Button("Use Selected") && Selection.activeGameObject != null) _targetObject = Selection.activeGameObject;
+            _fxController = (AnimatorController)EditorGUILayout.ObjectField("FX Controller", _fxController, typeof(AnimatorController), false);
+            if (GUILayout.Button("Scan and Copy") && _targetObject && _fxController) ScanAndCopy();
         }
 
         private void ScanAndCopy()
         {
             HashSet<string> paramsToAdd = new HashSet<string>();
-            foreach (MonoBehaviour comp in targetObject.GetComponentsInChildren<MonoBehaviour>(true))
+            foreach (MonoBehaviour comp in _targetObject.GetComponentsInChildren<MonoBehaviour>(true))
             {
                 if (comp == null || comp.GetType().Name != "VRCFury") continue;
 
@@ -42,9 +42,9 @@ namespace Shino.Tools.Editor
             int addedCount = 0;
             foreach (string pName in paramsToAdd)
             {
-                if (!System.Array.Exists(fxController.parameters, p => p.name == pName))
+                if (!System.Array.Exists(_fxController.parameters, p => p.name == pName))
                 {
-                    fxController.AddParameter(pName, AnimatorControllerParameterType.Bool);
+                    _fxController.AddParameter(pName, AnimatorControllerParameterType.Bool);
                     addedCount++;
                 }
             }

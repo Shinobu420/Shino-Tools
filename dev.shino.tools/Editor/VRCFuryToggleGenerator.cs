@@ -7,8 +7,8 @@ namespace Shino.Tools.Editor
 {
     public class VRCFuryToggleGenerator : EditorWindow
     {
-        public GameObject targetRoot;
-        public string menuPrefix = "";
+        [SerializeField] private GameObject _targetRoot;
+        [SerializeField] private string _menuPrefix = "";
 
         [MenuItem("Tools/Shino/VRCFury Toggle Generator")]
         public static void ShowWindow() => GetWindow<VRCFuryToggleGenerator>("VRCFury Toggle Gen");
@@ -16,23 +16,23 @@ namespace Shino.Tools.Editor
         private void OnGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            targetRoot = (GameObject)EditorGUILayout.ObjectField("Target Root", targetRoot, typeof(GameObject), true);
+            _targetRoot = (GameObject)EditorGUILayout.ObjectField("Target Root", _targetRoot, typeof(GameObject), true);
             if (GUILayout.Button("Use Selected", GUILayout.Width(100)))
             {
-                if (Selection.activeGameObject != null) targetRoot = Selection.activeGameObject;
+                if (Selection.activeGameObject != null) _targetRoot = Selection.activeGameObject;
             }
             EditorGUILayout.EndHorizontal();
-            menuPrefix = EditorGUILayout.TextField("Menu Prefix", menuPrefix); 
+            _menuPrefix = EditorGUILayout.TextField("Menu Prefix", _menuPrefix); 
             EditorGUILayout.HelpBox("Example: 'Clothing/Jackets'. Leave blank to put directly in the main menu.", MessageType.Info);
 
             GUILayout.Space(10);
 
-            if (GUILayout.Button("1. Generate Toggles (Turn Off)") && targetRoot != null)
+            if (GUILayout.Button("1. Generate Toggles (Turn Off)") && _targetRoot != null)
             {
                 GenerateToggles();
             }
 
-            if (GUILayout.Button("2. Assign Global Params to Detected Toggles") && targetRoot != null)
+            if (GUILayout.Button("2. Assign Global Params to Detected Toggles") && _targetRoot != null)
             {
                 AssignGlobalParams();
             }
@@ -51,7 +51,7 @@ namespace Shino.Tools.Editor
             }
 
             List<GameObject> validChildren = new List<GameObject>();
-            ScanChildren(targetRoot.transform, validChildren);
+            ScanChildren(_targetRoot.transform, validChildren);
 
             int addedCount = 0;
 
@@ -73,9 +73,9 @@ namespace Shino.Tools.Editor
                 so.Update();
 
                 string toggleMenuPath = child.name;
-                if (!string.IsNullOrWhiteSpace(menuPrefix))
+                if (!string.IsNullOrWhiteSpace(_menuPrefix))
                 {
-                    toggleMenuPath = $"{menuPrefix.TrimEnd('/')}/{child.name}";
+                    toggleMenuPath = $"{_menuPrefix.TrimEnd('/')}/{child.name}";
                 }
 
                 newFeature.FindPropertyRelative("name").stringValue = toggleMenuPath;
@@ -105,7 +105,7 @@ namespace Shino.Tools.Editor
         {
             int togglesUpdated = 0;
 
-            foreach (MonoBehaviour comp in targetRoot.GetComponentsInChildren<MonoBehaviour>(true))
+            foreach (MonoBehaviour comp in _targetRoot.GetComponentsInChildren<MonoBehaviour>(true))
             {
                 if (comp == null || comp.GetType().Name != "VRCFury") continue;
 
