@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Shino.Tools.Editor
 {
-    public class MassPackageImporter : EditorWindow
+    public static class MassPackageImporter
     {
         [MenuItem("Tools/Shino/Mass Importer")]
         public static void ImportPackages()
