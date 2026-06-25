@@ -9,33 +9,51 @@ namespace Shino.Tools.Editor
     {
         [SerializeField] private GameObject _targetRoot;
         [SerializeField] private string _menuPrefix = "";
+        [SerializeField] private List<GameObject> _ignoredObjects = new List<GameObject>();
 
         [MenuItem("Tools/Shino/VRCFury Toggle Generator")]
         public static void ShowWindow() => GetWindow<VRCFuryToggleGenerator>("VRCFury Toggle Gen");
 
         private void OnGUI()
         {
+            SerializedObject so = new SerializedObject(this);
+            so.Update();
+
+            SerializedProperty targetRootProp = so.FindProperty("_targetRoot");
+            SerializedProperty menuPrefixProp = so.FindProperty("_menuPrefix");
+            SerializedProperty ignoredObjectsProp = so.FindProperty("_ignoredObjects");
+
             EditorGUILayout.BeginHorizontal();
-            _targetRoot = (GameObject)EditorGUILayout.ObjectField("Target Root", _targetRoot, typeof(GameObject), true);
+            EditorGUILayout.PropertyField(targetRootProp, new GUIContent("Target Root"));
             if (GUILayout.Button("Use Selected", GUILayout.Width(100)))
             {
                 if (Selection.activeGameObject != null)
                 {
-                    _targetRoot = Selection.activeGameObject;
+                    targetRootProp.objectReferenceValue = Selection.activeGameObject;
                 }
             }
             EditorGUILayout.EndHorizontal();
-            _menuPrefix = EditorGUILayout.TextField("Menu Prefix", _menuPrefix); 
+
+            EditorGUILayout.PropertyField(menuPrefixProp, new GUIContent("Menu Prefix"));
             EditorGUILayout.HelpBox("Example: 'Clothing/Jackets'. Leave blank to put directly in the main menu.", MessageType.Info);
 
             GUILayout.Space(10);
 
-            if (GUILayout.Button("1. Generate Toggles (Turn Off)") && _targetRoot != null)
+            EditorGUILayout.PropertyField(ignoredObjectsProp, true);
+
+            GUILayout.Space(10);
+
+            bool generate = GUILayout.Button("1. Generate Toggles (Turn Off)") && targetRootProp.objectReferenceValue != null;
+            bool assign = GUILayout.Button("2. Assign Global Params to Detected Toggles") && targetRootProp.objectReferenceValue != null;
+
+            so.ApplyModifiedProperties();
+
+            if (generate)
             {
                 GenerateToggles();
             }
 
-            if (GUILayout.Button("2. Assign Global Params to Detected Toggles") && _targetRoot != null)
+            if (assign)
             {
                 AssignGlobalParams();
             }
@@ -175,7 +193,11 @@ namespace Shino.Tools.Editor
             {
                 if (child.name == "Armature")
                 {
-                    continue; 
+                    continue;
+                }
+                if (_ignoredObjects != null && _ignoredObjects.Contains(child.gameObject))
+                {
+                    continue;
                 }
                 validObjects.Add(child.gameObject);
                 ScanChildren(child, validObjects);
