@@ -7,9 +7,16 @@ namespace Shino.Tools.Editor
 {
     public class VRCFuryToggleGenerator : EditorWindow
     {
+        private enum ToggleMode
+        {
+            ToggleOff,
+            ToggleOn
+        }
+
         [SerializeField] private GameObject _targetRoot;
         [SerializeField] private string _menuPrefix = "";
         [SerializeField] private List<GameObject> _ignoredObjects = new List<GameObject>();
+        [SerializeField] private ToggleMode _toggleMode = ToggleMode.ToggleOff;
 
         [MenuItem("Tools/Shino/VRCFury Toggle Generator")]
         public static void ShowWindow() => GetWindow<VRCFuryToggleGenerator>("VRCFury Toggle Gen");
@@ -22,6 +29,7 @@ namespace Shino.Tools.Editor
             SerializedProperty targetRootProp = so.FindProperty("_targetRoot");
             SerializedProperty menuPrefixProp = so.FindProperty("_menuPrefix");
             SerializedProperty ignoredObjectsProp = so.FindProperty("_ignoredObjects");
+            SerializedProperty toggleModeProp = so.FindProperty("_toggleMode");
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(targetRootProp, new GUIContent("Target Root"));
@@ -43,7 +51,12 @@ namespace Shino.Tools.Editor
 
             GUILayout.Space(10);
 
-            bool generate = GUILayout.Button("1. Generate Toggles (Turn Off)") && targetRootProp.objectReferenceValue != null;
+            EditorGUILayout.PropertyField(toggleModeProp, new GUIContent("Toggle Mode"));
+
+            GUILayout.Space(10);
+
+            string generateButtonLabel = _toggleMode == ToggleMode.ToggleOff ? "1. Generate Toggles (Turn Off)" : "1. Generate Toggles (Turn On)";
+            bool generate = GUILayout.Button(generateButtonLabel) && targetRootProp.objectReferenceValue != null;
             bool assign = GUILayout.Button("2. Assign Global Params to Detected Toggles") && targetRootProp.objectReferenceValue != null;
 
             so.ApplyModifiedProperties();
@@ -119,7 +132,7 @@ namespace Shino.Tools.Editor
                 so.Update();
 
                 newAction.FindPropertyRelative("obj").objectReferenceValue = child;
-                newAction.FindPropertyRelative("mode").enumValueIndex = 1; 
+                newAction.FindPropertyRelative("mode").enumValueIndex = _toggleMode == ToggleMode.ToggleOff ? 1 : 0; 
 
                 so.ApplyModifiedProperties();
                 addedCount++;
