@@ -8,6 +8,7 @@
         "name": "Shino"
     },
     "vpmDependencies": {
-        "com.vrchat.avatars": ">=3.3.0 <3.11.0"
+        "com.vrchat.avatars": ">=3.3.0 <3.11.0",
+        "com.vrcfury.vrcfury": "^1.0.0"
     }
 }
